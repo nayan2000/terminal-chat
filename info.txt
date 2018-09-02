@@ -1,0 +1,14 @@
+pusher : this property will hold the Pusher server instance once it is available
+
+channel : this property will hold the Pusher instance of the channnel subscribed to.
+
+chatroom : this property will hold the name of the channel the user wants to chat in.
+
+clientPusher : this property will hold the Pusher cient instance once it is available
+
+user : this property will hold the details of the currently logged in user
+
+users : this property holds a static list of users who can log in, with their values as the password. 
+In a real world application, this would usually be gotten from some database or from some API.
+
+chatrooms : this property holds a list of all available chat-rooms one can join.
