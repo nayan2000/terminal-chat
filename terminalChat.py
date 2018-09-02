@@ -2,7 +2,7 @@ import getpass
 from termcolor import colored
 from dotenv import load_dotenv
 
-from pusher import pusher
+from pusher import Pusher
 import pysher
 import os
 import json
@@ -54,6 +54,7 @@ class terminalChat():
             print(colored("No such user exists", "red"))
             self.login()
 
+
     #Now once a user logs in, let him select a chatroom to join
     
     def selectChatroom(self):
@@ -72,6 +73,39 @@ class terminalChat():
 
     def getInput(self):
         message = input(colored("{}: ".format(self.user), "green"))
+        self.pusher.trigger(self.chatroom, u'newmessage', {"user": self.user, "message": message})
+
+    # Pusher and channel based functions below
+    
+    #below function initializes both Http Server Pusher as well as clientPusher 
+    def initPusher(self):
+        self.pusher = Pusher(
+            app_id = os.getenv('PUSHER_APP_ID', None),
+            key = os.getenv('PUSHER_APP_KEY', None),
+            secret = os.getenv('PUSHER_APP_SECRET', None),
+            cluster = os.getenv('PUSHER_APP_CLUSTER', None)
+            )
+        self.clientPusher = pysher.Pusher(
+            os.getenv('PUSHER_APP_KEY', None),
+            os.getenv('PUSHER_APP_CLUSTER', None)
+
+        )
+        self.clientPusher.connection.bind('pusher:connection_established', self.connectHandler)
+        self.clientPusher.connect()
+
+
+    #below functon is called once pusher has successfully established a connection
+    def connectHandler(self, data):
+        self.channel = self.clientPusher.subscribe(self.chatroom)
+        self.channel.bind('newmessage', self.pusherCallback)
+
+    #below function is called once pusher receives a new event
+    def pusherCallback(self, message):
+        message = json.loads(message)
+        if message['user'] != self.user:
+            print(colored(" {} : {}".format(message['user'], message['message']), "blue"))
+            print(colored("{} : ".format(self.user), "green"))
+
 
 if __name__ == "__main__":
     terminalChat().main()
