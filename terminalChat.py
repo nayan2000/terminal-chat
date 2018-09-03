@@ -62,6 +62,8 @@ class terminalChat():
         chatroom = input(colored("Please select a chatroom : ", "green"))
         if chatroom in self.chatrooms:
             self.chatroom = chatroom
+            print(colored(" ####################+++++ Welcome to '{}' +++++###################".format(chatroom.upper()), "yellow"))
+            print(colored("\n\n Chatting in terminal is so nice \n\n", "yellow"))
             self.initPusher()
         
         else:
@@ -103,8 +105,8 @@ class terminalChat():
     def pusherCallback(self, message):
         message = json.loads(message)
         if message['user'] != self.user:
-            print(colored(" {} : {}".format(message['user'], message['message']), "blue"))
-            print(colored("{} : ".format(self.user), "green"))
+            print(colored("\n\n{} : {}".format(message['user'], message['message']), "blue"))
+            print(colored("\n{} : ".format(self.user), "green"), end = "")
 
 
 if __name__ == "__main__":
